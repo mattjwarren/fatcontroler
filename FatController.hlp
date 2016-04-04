@@ -1,0 +1,153 @@
+
+ /==================================================================\
+(                       FatController                                 )
+ \==================================================================/
+
+
+      Copyright (c)  2005 Matthew Warren.
+      Permission is granted to copy, distribute and/or modify this document
+      under the terms of the GNU Free Documentation License, Version 1.2
+      or any later version published by the Free Software Foundation;
+      with no Invariant Sections, no Front-Cover Texts, and no Back-Cover
+      Texts.  A copy of the license is included in the section entitled "GNU
+      Free Documentation License".
+
+
+	Commands :-
+
+* alias name {....}
+	        Set a command alias
+
+		An alias enables a shorthand version of a command to be
+		defined. Substitution is performed on aliases.
+
+* (def)ine entity {name} {....}
+	        Define a managed object
+
+		Once an entity is defined you can execute commands on it
+		with the 'execute' command.
+
+*(def)ine daemon {name}
+	        Define a daemon.
+
+		Daemons execute their tasks against subscribed entities
+		according to their schedule. Any collectors assigned
+		to the tasks extract and store data, possibly alerting for
+		given value ranges.
+
+*(def)ine schedule {daemon} {start} {end} {period}
+	        Define a schedule.
+
+		Sets a daemons execution schedule. Will not start running
+		untill activate daemon is used.
+
+*(def)ine task {daemon} {taskname} {command} 
+	        Define a task to a daemon.
+
+		Adds a task to the daemon.
+
+*(def)ine collector {daemon} {task} {collectorname} {datatag} {lineskip} {format} {file}
+	        Define a collector for a daemon task.
+
+		Assigns a collector to a task.
+
+*(def)ine alert {dameon} {task} {collector} {min} {max} {message}
+	         Define an alert for a collector
+
+		Assigns an alert to a collector.
+
+*alerts
+		Lists the current alertqueue
+
+*activate daemon {daemon}
+	        Starts running a daemons schedule
+
+		Starts the internal scheduler firing the daemons tasks
+		according to its schedule
+
+*deactivate daemon {daemon}
+	         Stops running a daemon
+
+		halts execution of the daemon. No alerts / reporting
+		will occur.
+
+*handle (first) (last)
+		Handles and removes alerts from the alertqueue. (first) (last) should specify a range of alerts.
+
+*(subs)cribe entity {daemon} {task} {entityname}
+	        Attatches an entity to a task.
+
+		Sets up the association between task & entity so the task will
+		execute against entity when the daemons schedule says so.
+
+*(unsub)scribe entity {daemon} {task} {entityname}
+	        Removes an entity from the task.
+
+		Breaks the association between a task and the entity.
+
+* (del)ete alias|entity|(sub)stitution|daemon|task|collector {name} {..name} ...
+	        Delete an object
+
+		Removes the definition of the object from the FatController.
+
+* (e(x)ec)ute entity {....}
+	        Run command against a managed object
+
+		This will attempt to execute the given command against the
+		given entity and collect any output.
+
+* exit
+	        Quit FatController
+
+		Fairly self explanatory..
+
+* help
+	        Show this information
+
+		Ditto..
+
+* load {name}
+	        Load a set defininitions, aliases, substitutions etc..
+
+		Re-defines all of the entites, aliases, substitutions and class
+		options from a file previously created using 'save'.
+
+* save all {name}
+	        Save all current definitions, aliases, substitutions etc..
+
+		These can be re-loaded using the 'load' command.
+
+* (sub)stitute {name} {....}
+	        Set a command substitution. Use the substitution with ~name
+
+* show alaises|entities|(subs)titutions|daemons|options|script {name}|scripts
+	        List defined objects
+
+* set {class} {option} {value}
+	        Sets an entity class option
+
+		Setting entity class options alters the way various entities
+		will behave. See the docs for the entity you are working with.
+
+* addline script cmd
+		appends the given line to the given script.
+
+		using the special substitutions ~1 .. ~999+ it is possible
+		to send parameters to scripts. ~1 and above will be replaced by the corresponding parameter given with the ?run script? command.
+
+* insline NYI
+
+* delline NYI
+
+* run script p1 p2 p3 p4 etc..
+		executes the given script, ~1 will take the value of p1, ~2 p2 etc?
+
+* show script {name}
+		lists the given script
+
+* show scripts
+		lists all scripts
+
+*msg or message msg text
+		displays a message. Handy in scripts?
+

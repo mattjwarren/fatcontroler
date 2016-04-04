@@ -1,0 +1,94 @@
+alias input:'<<'!='' +* create:self.definealias(SplitCmd[1],SplitCmd[2:])
+define entity input:not(self.EntityManager.isEntity('<<')) input:'<<'!='' +* create:self.EntityManager.define(SplitCmd[2],SplitCmd[3:])
+def entity input:not(self.EntityManager.isEntity('<<')) input:'<<'!='' +* create:self.EntityManager.define(SplitCmd[2],SplitCmd[3:])
+delete entity input:self.EntityManager.isEntity('<<') create:self.EntityManager.delete(SplitCmd[2])
+del entity input:self.EntityManager.isEntity('<<') create:self.EntityManager.delete(SplitCmd[2])
+delete alias input:self.isalias('<<') create:self.delalias(SplitCmd[2])
+del alias input:self.isalias('<<') create:self.delalias(SplitCmd[2])
+delete substitution input:self.issubstitute('<<') create:self.delsubstitution(SplitCmd[2])
+delete sub input:self.issubstitute('<<') create:self.delsubstitution(SplitCmd[2])
+del substitution input:self.issubstitute('<<') create:self.delsubstitution(SplitCmd[2])
+del sub input:self.issubstitute('<<') create:self.delsubstitution(SplitCmd[2])
+execute input:self.EntityManager.isEntity('<<') input:'<<'!='' +* create:self.EntityManager.execute(SplitCmd[1],SplitCmd[2:])
+exec input:self.EntityManager.isEntity('<<') input:'<<'!='' +* create:self.EntityManager.execute(SplitCmd[1],SplitCmd[2:])
+x input:self.EntityManager.isEntity('<<') input:'<<'!='' +* create:self.EntityManager.execute(SplitCmd[1],SplitCmd[2:])
+exit create:sys.exit(0)
+quit create:sys.exit(0)
+help create:self.displayhelp()
+load input:'<<'!='' create:self.load(SplitCmd[1])
+save input:'<<'==('all') input:not(00) create:self.save(SplitCmd[1],SplitCmd[2])
+show entities create:self.EntityManager.show()
+show aliases create:self.showaliases()
+show substitutions create:self.showsubstitutions()
+show subs create:self.showsubstitutions()
+show daemons create:self.showdaemons()
+substitute input:'<<'!='' create:self.definesubstitution(SplitCmd[1],SplitCmd[2:])
+sub input:'<<'!='' create:self.definesubstitution(SplitCmd[1],SplitCmd[2:])
+trace input:'<<'!='' create:self.toggletrace(SplitCmd[1])
+set input:'<<'!='' input:'<<'!='' input:'<<'!='' +* create:self.SetOption(SplitCmd[1],SplitCmd[2],'::SPACE::'.join(SplitCmd[3:]))
+show options create:self.displayopts()
+define daemon input:'<<'!='' create:self.createdaemon(SplitCmd[2])
+def daemon input:'<<'!='' create:self.createdaemon(SplitCmd[2])
+define schedule input:self.IsDaemon('<<') input:'<<'!='' input:'<<'!='' input:'<<'!='' create:self.scheduledaemon(SplitCmd[2],SplitCmd[3],SplitCmd[4],SplitCmd[5])
+define sched input:self.IsDaemon('<<') input:'<<'!='' input:'<<'!='' input:'<<'!='' create:self.scheduledaemon(SplitCmd[2],SplitCmd[3],SplitCmd[4],SplitCmd[5])
+def schedule input:self.IsDaemon('<<') input:'<<'!='' input:'<<'!='' input:'<<'!='' create:self.scheduledaemon(SplitCmd[2],SplitCmd[3],SplitCmd[4],SplitCmd[5])
+def sched input:self.IsDaemon('<<') input:'<<'!='' input:'<<'!='' input:'<<'!='' create:self.scheduledaemon(SplitCmd[2],SplitCmd[3],SplitCmd[4],SplitCmd[5])
+define task input:self.IsDaemon('<<') input:'<<'!='' +* create:self.adddaemontask(SplitCmd[2],SplitCmd[3],SplitCmd[4:])
+define collector input:self.IsDaemon('<<') input:'<<'!='' input:'<<'!='' input:'<<'!='' input:'<<'!='' input:'<<'!='' input:'<<'!='' create:self.adddaemontaskcollector(SplitCmd[2],SplitCmd[3],SplitCmd[4],SplitCmd[5],SplitCmd[6],SplitCmd[7],SplitCmd[8])
+subscribe entity input:self.IsDaemon('<<') input:'<<'!='' input:self.EntityManager.isEntity('<<') create:self.adddaemontaskentity(SplitCmd[2],SplitCmd[3],SplitCmd[4])
+subs entity input:self.IsDaemon('<<') input:'<<'!='' input:self.EntityManager.isEntity('<<') create:self.adddaemontaskentity(SplitCmd[2],SplitCmd[3],SplitCmd[4])
+def task input:self.IsDaemon('<<') input:'<<'!='' +* create:self.adddaemontask(SplitCmd[2],SplitCmd[3],SplitCmd[4:])
+def collector input:self.IsDaemon('<<') input:'<<'!='' input:'<<'!='' input:'<<'!='' input:'<<'!='' input:'<<'!='' input:'<<'!='' create:self.adddaemontaskcollector(SplitCmd[2],SplitCmd[3],SplitCmd[4],SplitCmd[5],SplitCmd[6],SplitCmd[7],SplitCmd[8])
+def alert input:self.IsDaemon('<<') input:'<<'!='' input:'<<'!='' input:'<<'!='' input:'<<'!='' input:'<<'!='' +*  create:self.adddaemontaskcollectoralert(SplitCmd[2],SplitCmd[3],SplitCmd[4],SplitCmd[5],SplitCmd[6],'::SPACE::'.join(SplitCmd[7:]),SplitCmd[-2:-1],SplitCmd[-1:])
+define alert input:self.IsDaemon('<<') input:'<<'!='' input:'<<'!='' input:'<<'!='' input:'<<'!='' input:'<<'!='' +*  create:self.adddaemontaskcollectoralert(SplitCmd[2],SplitCmd[3],SplitCmd[4],SplitCmd[5],SplitCmd[6],'::SPACE::'.join(SplitCmd[7:-2]),SplitCmd[-2:-1],SplitCmd[-1:])
+delete daemon input:self.IsDaemon('<<') create:self.removedaemon(SplitCmd[2])
+del daemon input:self.IsDaemon('<<') create:self.removedaemon(SplitCmd[2])
+delete task input:self.IsDaemon('<<') input:'<<'!='' create:self.removedaemontask(SplitCmd[2],SplitCmd[3])
+del task input:self.IsDaemon('<<') input:'<<'!='' create:self.removedaemontask(SplitCmd[2],SplitCmd[3])
+update task input:self.IsDaemon('<<') input:'<<'!='' input:'<<'!='' create:self.updatedaemontask(SplitCmd[2],SplitCmd[3],SplitCmd[4:])
+upd task  input:self.IsDaemon('<<') input:'<<'!='' input:'<<'!='' create:self.updatedaemontask(SplitCmd[2],SplitCmd[3],SplitCmd[4:])
+delete collector input:self.IsDaemon('<<') input:'<<'!='' input:'<<'!='' create:self.removedaemontaskcollector(SplitCmd[2],SplitCmd[3],SplitCmd[4])
+del collector input:self.IsDaemon('<<') input:'<<'!='' input:'<<'!='' create:self.removedaemontaskcollector(SplitCmd[2],SplitCmd[3],SplitCmd[4])
+unsubscribe entity input:self.IsDaemon('<<') input:'<<'!='' input:'<<'!='' create:self.removedaemontaskentity(SplitCmd[2],SplitCmd[3],SplitCmd[4])
+unsub entity input:self.IsDaemon('<<') input:'<<'!='' input:'<<'!='' create:self.removedaemontaskentity(SplitCmd[2],SplitCmd[3],SplitCmd[4])
+activate daemon input:self.IsDaemon('<<') create:self.makedaemonlive(SplitCmd[2])
+act daemon input:self.IsDaemon('<<') create:self.makedaemonlive(SplitCmd[2])
+show active daemons create:self.showactivedaemons()
+deactivate daemon input:self.IsDaemon('<<') create:self.killdaemon(SplitCmd[2])
+deac daemon input:self.IsDaemon('<<') create:self.killdaemon(SplitCmd[2])
+alerts create:self.showalertqueue()
+show alerts create:self.showalertqueue()
+handle input:'<<'!='' input:'<<'!='' create:self.handlealertrange(int(SplitCmd[1]),int(SplitCmd[2]))
+handle input:'<<'!='' create:self.handlealertrange(int(SplitCmd[1]))
+addline input:'<<'!='' +* create:self.appendtoscript(SplitCmd[1],SplitCmd[2:])
+insline input:'<<'!='' input:'<<'!='' +* create:self.inserttoscript(SplitCmd[1],SplitCmd[2],SplitCmd[3:])
+delline input:'<<'!='' input:'<<'!='' create:self.delfromscript(SplitCmd[1],SplitCmd[2])
+run input:self.isScript('<<') +* create:self.runscript(SplitCmd[1],SplitCmd[2:])
+delete script input:'<<'!='' create:self.delscript(SplitCmd[2])
+del script input:self.isScript('<<') create:self.delscript(SplitCmd[2])
+show script input:self.isScript('<<') create:self.showscripts(SplitCmd[2])
+show scripts create:self.showscripts('all')
+message input:'<<'!='' +* create:self.message(SplitCmd[1:])
+msg input:'<<'!='' +* create:self.message(SplitCmd[1:])
+ENDDCOMMANDDEFS
+#
+#Copyright 2005 MatthewWarren.
+# Permission to copy is hereby granted so long as all actions taken
+# remain within the terms specified by the GNU General Public License.
+#
+# This file is part of 'The FatController'
+#
+#    'The FatController' is free software; you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation; either version 2 of the License, or
+#    (at your option) any later version.
+#
+#    'The FatController' is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with 'The FatController'; if not, write to the Free Software
+#    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+#
