@@ -1,5 +1,5 @@
 #!/usr/bin/python
-# -*- coding: cp1252 -*-
+# -*- coding: 1252 -*-
 #
 #Copyright 2005 MatthewWarren.
 # Permission to copy is hereby granted so long as all actions taken
@@ -112,6 +112,8 @@ class FatController(wx.Frame):
         #
         #setup system dependant values
         #
+        #DEBUGMJW
+        print "os.name is ",os.name
         if os.name=='posix':
             self.system='UNIX'
             self.installroot='/opt/yab/FatController/'
@@ -797,7 +799,8 @@ class FatController(wx.Frame):
                         else:
                             self.display.infodisplay('Error: Dont know which entity to use.')
                     else:
-                        self.display.infodisplay('Error: Bad command.\t'+Command+'')
+                        print "DEBUGMJW: Command is ",Command
+                        self.display.infodisplay('Error: Bad command.\t'+Command)
                 if AliasHit==1:
                     AliasHit=0
                     CommandDefs.close()
