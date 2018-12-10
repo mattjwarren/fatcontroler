@@ -1,5 +1,24 @@
 define entity LOCAL me
-define entity SSH frigg frigg warrenma EggFishPants91 AAAAB3NzaC1yc2EAAAADAQABAAABAQDxPFJcHuuo6hs9uAARJIh5tn63rvj8oynxYiU4N0mQNscs890pq7ajVThBkftN0hKMaXHsg3V40C1lrTI8T+v8MMNNZyN3o0qEpaVlALtQ2UdYMt3zJPwFjU5S8p+5FG8KaGJJRb8b1d3KjxksBSmBWX8h5Y6f4UNYyf2eFfzO3ltDe7ugrYlpCiLTi5kaSrRVUi+NzGq42OkILOuNMC0CnZqEjoFFMsS4BuHGlmfmJH/Y0Fs/kiIwq84unTlyvTheuLHweV7iVBzmRoTIybK2IqD9o1id/CKaMtvXQ9bW9lz3up7Gt9Oj5kHYatKucZHR9kBASaGpXDbtY/L7nzA5
+define entity SSH gymir gymir warrenma EggFishPants91 /home/warrenma/.ssh/id_rsa.pub
+define entity SSH loptr loptr.ssd.hursley.ibm.com warrenma EggFishPants91 /home/warrenma/.ssh/id_rsa.pub
+define entity SSH gilling gilling warrenma EggFishPants91 /home/warrenma/.ssh/id_rsa.pub
+define entity SSH fenja fenja.ssd.hursley.ibm.com warrenma EggFishPants91 /home/warrenma/.ssh/id_rsa.pub
+define entity SSH bestla bestla.ssd.hursley.ibm.com warrenma EggFishPants91 /home/warrenma/.ssh/id_rsa.pub
+define entity ENTITYGROUP gillslaves aegir fenja bestla greip loptr menja rindr
+define entity SSH brimir brimir.ssd.hursley.ibm.com warrenma EggFishPants91 /home/warrenma/.ssh/id_rsa.pub
+define entity SSH bolborn bolborn.ssd.hursley.ibm.com warrenma EggFishPants91 /home/warrenma/.ssh/id_rsa.pub
+define entity SSH hymir hymir.ssd.hursley.ibm.com warrenma EggFishPants91 /home/warrenma/.ssh/id_rsa.pub
+define entity ENTITYGROUP devms hymir hroor brimir
+define entity SSH menja menja.ssd.hursley.ibm.com warrenma EggFishPants91 /home/warrenma/.ssh/id_rsa.pub
+define entity SSH hroor hroor.ssd.hursley.ibm.com warrenma EggFishPants91 /home/warrenma/.ssh/id_rsa.pub
+define entity ENTITYGROUP buildservers gilling gymir bragi frigg
+define entity SSH aegir aegir.ssd.hursley.ibm.com warrenma EggFishPants91 /home/warrenma/.ssh/id_rsa.pub
+define entity SSH frigg frigg warrenma EggFishPants91 /home/warrenma/.ssh/id_rsa.pub
+define entity SSH fulla fulla.ssd.hursley.ibm.com warrenma EggFishPants91 /home/warrenma/.ssh/id_rsa.pub
+define entity ENTITYGROUP jenks gilling gymir bragi bolborn fulla frigg
+define entity SSH bragi bragi warrenma EggFishPants91 /home/warrenma/.ssh/id_rsa.pub
+define entity SSH rindr rindr.ssd.hursley.ibm.com warrenma EggFishPants91 /home/warrenma/.ssh/id_rsa.pub
+define entity SSH greip greip.ssd.hursley.ibm.com warrenma EggFishPants91 /home/warrenma/.ssh/id_rsa.pub
 alias loadall load general
 alias saveall save all general
 substitute pendingdates select pending_date from volumes where status='PENDING' order by pending_date
@@ -42,6 +61,7 @@ addline showvrs x ~1 q drm * wherestate=vaultretrieve
 addline showvrs set TSM DATAONLY no
 addline test_fail msg TEST_FAIL fired
 addline test_fail msg ~ALERT_ENTITY fired TEST_FAIL
+set FATCONTROLLER userhome /home/warrenma
 set FATCONTROLLER VERBOSE yes
 set FATCONTROLLER DEVELOPERPATH c:\\
 set FATCONTROLLER DEVELOPER no

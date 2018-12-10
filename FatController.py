@@ -2,23 +2,28 @@
 # -*- coding: 1252 -*-
 #
 #Copyright 2005 MatthewWarren.
+# Permission to copy is hereby granted so long as all actions taken
+# remain within the terms specified by the GNU General Public License.
 #
 # This file is part of 'The FatController'
 #
+#    'The FatController' is free software; you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation; either version 2 of the License, or
+#    (at your option) any later version.
+#
+#    'The FatController' is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with 'The FatController'; if not, write to the Free Software
+#    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+#
+#
+#
 # Version History
-#
-#
-#
-#
-# 11/10/18  v1f12r1a Resurrected from the depths of ancient archives and twiddled with.
-#                    Some fixups to get running in linux.
-#                    Much amazement generated at crazy ways I decided to do things back in the good old days.
-#                    Added an SSH entity. It only took 12 years.
-#                    What seemed so daunting back then was done in an hour from scratch today :)
-#                    (Its probably broken, definitely needs work!)
-#                    Dropped GNU License from this point onward. Becomes (C)Matthew Warren
-#                    at least until it's in a fit state to go public.
-#
 # 15/12/06  v1f11r1a GUI Version update. Bugfixes.
 #                    Added green/amber/red lights to entity tabs
 #                    Added ability to execute FC scripts on alert_pass and alert_fail
@@ -34,15 +39,15 @@
 #
 # 21/09/05  v1f8r3a Enhanced alerting mechanism.
 #                   repackage new file structure. (migrate away from monlith)
-#		                minor version string issue fixed
+#		    minor version string issue fixed
 #
 # 15/09/05  v1f8r2a packaging fixup
 #
 # 14/09/05  v1f8r1s Added ENTITYGROUP entity type
-#      		          removed GUI code
+#      		    removed GUI code
 #
 # 28/05/05  v1f7r1a Bought under GNU public license.
-#                   DaemonManager class incorporated and code updated.
+#           DaemonManager class incorporated and code updated.
 #
 # 09/02/05  v1f6r1a Woo! up to version1 - the GUI.. or what there is of it!
 #                   featureset still v6
@@ -805,8 +810,9 @@ class FatController(wx.Frame):
 
     def load(self,Profile):#will be load(profile)
         #EntityManager=FC_entitymanager.entitymanager()
-        self.Aliases={}
+        self.Aliases={} #Is this right?
         try:
+            print "DEBUGMJW: "+self.installroot+Profile+'.sav'
             FileToLoad=file(self.installroot+Profile+'.sav')
             for Line in FileToLoad:
                 self.processcommand(Line)

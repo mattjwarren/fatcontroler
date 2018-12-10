@@ -21,23 +21,43 @@ for line in stdout:
 class SSH(FC_entity.entity):
 
     Connections={} # {'name':telnetlib.Telnet()}
+    valid_def_parmcount=4 # number of parameters expected for definition
+                         # including name
 
 
-    def __init__(self,Name,TCPAddress,SSHUser,SSHPass,SSHKey):
+    def __init__(self,Name,TCPAddress,SSHUser,SSHPass,SSHKeyfile):
         self.Name=Name
         self.TCPAddress=TCPAddress
         self.SSHUser=SSHUser
         self.SSHPass=SSHPass
-        self.SSHKey=paramiko.RSAKey(data=base64.b64decode(SSHKey))
+        self.SSHKey=None
+        self.SSHKey_raw=None
+        self.SSHKeyfile=SSHKeyfile
         self.Connection=self.openconnection()
 
     def openconnection(self):
         DBGBN='telnetopenconnection'
         C=paramiko.SSHClient()
+        self.SSHKey_raw=self.get_key()
+        self.SSHKey=paramiko.RSAKey(data=base64.b64decode(self.SSHKey_raw))
         C.set_missing_host_key_policy(paramiko.client.AutoAddPolicy())
         #C.get_host_keys().add(self.TCPAddress,'ssh-rsa',self.SSHKey)
         C.connect(self.TCPAddress,username=self.SSHUser,password=self.SSHPass,look_for_keys=False)
         return C
+
+    def get_key(self):
+        #look by default in ~/.ssh/id_rsa.pub
+        #for first line starting ssh-rsa
+        key=''
+        keyfile=self.SSHKeyfile
+        with open(keyfile,'r') as kf:
+            for line in kf:
+                if line.startswith('ssh-rsa'):
+                    key=line.split()[1]
+                    break
+        return key
+
+            
     
     ###########
     # START OF INTERFACE entity()
@@ -48,7 +68,19 @@ class SSH(FC_entity.entity):
     def execute(self,CmdList):
         alldata=''
         if CmdList:
-            stdin,stdout,stderr=self.Connection.exec_command(' '.join(CmdList))
+            good=False
+            while not good:
+                try:
+                    stdin,stdout,stderr=self.Connection.exec_command(' '.join(CmdList))
+                    good=True
+                except paramiko.ssh_exception.SSHException,e:
+                    print "SSH exception executing command. Trying conn_reset"
+                    self.Connection=self.openconnection()
+
+
+
+
+
             while not stdout.channel.exit_status_ready():
                 # Print stdout data when available
                 if stdout.channel.recv_ready():
@@ -77,7 +109,7 @@ class SSH(FC_entity.entity):
         return self.Name
 
     def getparameterstring(self):
-        return self.TCPAddress+' '+self.SSHUser+' '+self.SSHPass+' '+'rsa_key AAA..'
+        return self.TCPAddress+' '+self.SSHUser+' '+self.SSHPass+' '+self.SSHKeyfile
 
     def getparameterlist(self):
         '''returns a list of the value given as string by getparameterstring'''

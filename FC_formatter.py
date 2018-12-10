@@ -10,15 +10,12 @@ class OutputFormatter(object):
     # H - line is main header. Will be indented once, bulleted, \n\n before & \n\n\n after
     # h - line is sub header. Will be bulleted. \n before and \n\n after
     #
-        print "DEBUGMJW: FC_formatter msg type is ",type(msg)
         #TODO: This is awful. fix strings to all unicode
         if type(msg) in [type('a string'),type(u'a unicode string')]:
-            print "DEBUGMJW type msg was string, wrapping into list"
             msg=[msg]
         if switchfocus:
             self.notebook.SetSelection(0)
         bullet=' * '
-        print "DEBUGMJW: msg is ",msg
         for line in msg:
             linestyle='N' # NORMAL line. no indent no bullet \n after
             if line.startswith('F!'):
