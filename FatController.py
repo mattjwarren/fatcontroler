@@ -70,9 +70,9 @@
 #                       delline
 #                       run
 #
-#v0.1.3a   	Collectors now write data to file if filename!=’none’
+#v0.1.3a   	Collectors now write data to file if filename!=ï¿½noneï¿½
 #	   	collectors work with un-rooted filenames. IE; 
-#			a filename will have ‘/opt/yab/FatController/data/’ or ‘c:\’ 
+#			a filename will have ï¿½/opt/yab/FatController/data/ï¿½ or ï¿½c:\ï¿½ 
 #			pre-pended to them depending on the type of system being used.
 #	   	schedules are now shown in local-times rather than seconds-since-the-epoch. 
 #	   	now+x notation now works for schedule start and end times.
@@ -81,7 +81,7 @@
 #v0.1.2a	Now it really does work under unix!
 #		fixed #dbg() TRACE bug.
 #		fixed shell escaping issues. escaped substitutions will have 
-#		the ‘\’s removed when executing from non-posix 
+#		the ï¿½\ï¿½s removed when executing from non-posix 
 #		environment.
 #
 #v0.1.1	a	Now runs under unix and windows!
@@ -89,7 +89,7 @@
 #
 #v0.1.0	a	Implementation of daemon framework
 #
-#v0.0.1a – v0.0.9a
+#v0.0.1a ï¿½ v0.0.9a
 #		Base implementation. (CLI / ENTITES / Commands)
 #M.Warren
 #
@@ -574,10 +574,10 @@ class FatController(wx.Frame):
 
 
     def isScript(self,scriptname):
-            if scriptname not in self.Scripts:
-                return 0
-            else:
-                return 1
+        if scriptname not in self.Scripts:
+            return 0
+        else:
+            return 1
 
     def showscripts(self,scriptname):
         DBGBN='showscripts'
@@ -821,9 +821,9 @@ class FatController(wx.Frame):
         #makeObjectBrowser()
 
     def handlealertrange(self,fromalert,toalert=None):
-            if toalert==None:
-                toalert=fromalert
-            self.DaemonManager.handlealert(fromalert,toalert+1)
+        if toalert==None:
+            toalert=fromalert
+        self.DaemonManager.handlealert(fromalert,toalert+1)
 
 
 FCApp=wx.PySimpleApp()

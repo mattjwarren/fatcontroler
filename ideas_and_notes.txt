@@ -1,0 +1,13 @@
+display and edit entity groups GUI section
+
+Select entity group hides other entity tabs
+
+
+entity group execution output appears in entitygroup tab, or maybe RC summary instead?
+
+fake multirow notebooks by making page vertical size 0 and sitching tab contents between books..?
+
+
+Alerts based on tag hit count
+
+More flexible alert limiting than <minimum > maximum

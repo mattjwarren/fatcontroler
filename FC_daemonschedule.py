@@ -11,42 +11,40 @@ class daemonschedule:
 	from that execution by all collectors attatched to the task.'''
     
     def __init__(self,start='now+0',end='now+3600',period='600'):
-	'''Implements the 'now+' method of specifying times.'''
-	if re.match('^now\+',start):
-	    start=time.time()+int(start[4:])
-	self.starttime=start
-	if re.match('^now\+',end):
-	    end=time.time()+int(end[4:])
-	self.endtime=end
-	self.period=int(period)
-        #print "type starttime is ",type(self.starttime)," type endtime is ",type(self.endtime)
+        '''Implements the 'now+' method of specifying times.'''
+        if re.match('^now.*',start):
+            start=time.time()+int(start[4:])
+        self.starttime=start
+        if re.match('^now.*',end):
+            end=time.time()+int(end[4:])
+        self.endtime=end
+        self.period=int(period)
+
 
     def updateschedule(self,start='now',end='now+3600',period='600'):
-	'''Implements the 'now+' method of specifying times.'''
-	if re.match('^now\+',start):
-	    start=time.time()+int(start[4:])
-	self.starttime=start
-	if re.match('^now\+',end):
-	    end=time.time()+int(end[4:])
-	self.endtime=end
-	self.period=int(period)
+        '''Implements the 'now+' method of specifying times.'''
+        if re.match('^now.*',start):
+            start=time.time()+int(start[4:])
+        self.starttime=start
+        if re.match('^now.*',end):
+            end=time.time()+int(end[4:])
+        self.endtime=end
+        self.period=int(period)
 
     def getperiod(self):
-	return self.period
+        return self.period
 
     def getstart(self):
-        #DBGBN="daemonschedulegetstart"
-        #dbg("returning "+str(self.starttime),DBGBN)
-	return self.starttime
+        return self.starttime
 
     def getend(self):
-	return self.endtime
+        return self.endtime
 
     def tostring(self):
-	return str(self.starttime)+' '+str(self.endtime)+' '+str(self.period)
+        return str(self.starttime)+' '+str(self.endtime)+' '+str(self.period)
 
     def todatestring(self):
-	return 'START::'+time.ctime(float(self.starttime))+'\t\tEND::'+time.ctime(float(self.endtime))+'\t\tPERIOD::'+str(self.period)
+        return 'START::'+time.ctime(float(self.starttime))+'\t\tEND::'+time.ctime(float(self.endtime))+'\t\tPERIOD::'+str(self.period)
 #
 # END OF CLASS daemonschedule
 ###########
