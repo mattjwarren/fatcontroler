@@ -11,3 +11,18 @@ fake multirow notebooks by making page vertical size 0 and sitching tab contents
 Alerts based on tag hit count
 
 More flexible alert limiting than <minimum > maximum
+
+
+
+bug:
+
+
+
+DEBUGMJW scheduled commands to execute are ['"ls', '-ltr"']
+DEBUGMJW: output list from scheduled entity execute is ['']
+MJW: line from scheduled tast is 
+DEBUGMJW: output list from scheduled entity execute is ['']
+MJW: line from scheduled tast is 
+DEBUGMJW scheduled commands to execute are ['"echo', 'testtext', '50"']
+DEBUGMJW: output list from scheduled entity execute is ['']
+MJW: line from scheduled tast is 

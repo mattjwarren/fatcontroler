@@ -76,11 +76,6 @@ class SSH(FC_entity.entity):
                 except paramiko.ssh_exception.SSHException,e:
                     print "SSH exception executing command. Trying conn_reset"
                     self.Connection=self.openconnection()
-
-
-
-
-
             while not stdout.channel.exit_status_ready():
                 # Print stdout data when available
                 if stdout.channel.recv_ready():
