@@ -26,3 +26,8 @@ MJW: line from scheduled tast is
 DEBUGMJW scheduled commands to execute are ['"echo', 'testtext', '50"']
 DEBUGMJW: output list from scheduled entity execute is ['']
 MJW: line from scheduled tast is 
+
+
+
+
+switchgroup - focus on specifc group of entities; display only their tabs

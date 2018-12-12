@@ -143,7 +143,9 @@ class entitymanager:
     #dbg('entering...',DBGBN)
     try:
       EntityType=self.Entities[EntityName].getentitytype()
+      print "DEBUGMJW scheduled commands to execute are",CmdList
       output=self.Entities[EntityName].execute(CmdList) #list of output returned
+      print "DEBUGMJW: output list from scheduled entity execute is",output
       #global LastExecutedEntity
       #LastExecutedEntity=EntityName
       return output
