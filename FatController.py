@@ -1,25 +1,6 @@
 #!/usr/bin/python
-# -*- coding: 1252 -*-
 #
-#Copyright 2005 MatthewWarren.
-# Permission to copy is hereby granted so long as all actions taken
-# remain within the terms specified by the GNU General Public License.
-#
-# This file is part of 'The FatController'
-#
-#    'The FatController' is free software; you can redistribute it and/or modify
-#    it under the terms of the GNU General Public License as published by
-#    the Free Software Foundation; either version 2 of the License, or
-#    (at your option) any later version.
-#
-#    'The FatController' is distributed in the hope that it will be useful,
-#    but WITHOUT ANY WARRANTY; without even the implied warranty of
-#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#    GNU General Public License for more details.
-#
-#    You should have received a copy of the GNU General Public License
-#    along with 'The FatController'; if not, write to the Free Software
-#    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+#Copyright 2005 MatthewWarren.matthew_j_warren@hotmail.com
 #
 #
 #
@@ -79,7 +60,7 @@
 #	   	Updated manual with entity reference.
 #
 #v0.1.2a	Now it really does work under unix!
-#		fixed #dbg() TRACE bug.
+#		fixed #dbg() trace bug.
 #		fixed shell escaping issues. escaped substitutions will have 
 #		the �\�s removed when executing from non-posix 
 #		environment.
@@ -97,7 +78,12 @@
 
 fcversion="v1f11r1a"
 __version__ = fcversion
+startmessage='Welcome to FatController '+fcversion
+
+
 import os,sys,telnetlib,re,shutil,time,threading,pprint
+
+from config import config
 import FC_entity,FC_daemonschedule,FC_daemontask,FC_daemon
 import FC_ScheduledTask,FC_ScheduledTaskHandler,FC_ThreadedScheduler,FC_entitymanager,FC_daemonmanager
 import FC_ENTITYGROUP,FC_LOCAL,FC_DUMB,FC_TSM,FC_TELNET
@@ -107,41 +93,21 @@ import FC_formatter
 
 
 class FatController(wx.Frame):
+    '''is essentially the command processor'''
     
     def __init__(self):
-        #
-        #setup system dependant values
-        #
-        #DEBUGMJW
-        print "os.name is ",os.name
-        if os.name=='posix':
-            self.system='UNIX'
-            self.installroot='/opt/yab/FatController/'
-            self.copycmd='cp'
-            self.driveroot=self.installroot
-        else:
-            self.system='WINDOWS'
-            self.installroot='c:\\program files\\yab\\FatController\\'
-            self.copycmd='copy'
-            self.driveroot='c:\\'
-        #
-        # top level managed structures
-        #
-        self.Aliases={}  #Dictionary of aliasname/command 
-        self.Substitutions={}
-        self.Scripts={}
-        self.TRACE={}
+        self.aliases={}  #Dictionary of aliasname/command 
+        self.substitutions={}
+        self.scripts={}
+        self.trace={}
         self.FCScheduler=FC_ThreadedScheduler.ThreadedScheduler()
         self.FCScheduler.start()
-        self.Opts={}
-        #
-        #constants
-        #
-        self.startmessage='Welcome to FatController '+fcversion+''
+        self.opts={}
+
         #############
         # GUI bits
         #############
-        wx.Frame.__init__(self,None,-1,"FatController",size=(900,800))
+        wx.Frame.__init__(self,None,-1,"FatController",size=(1024,768))
 
         # Main Splitters
         self.VSplitter=wx.SplitterWindow(self,-1,(0,0),(0,0),wx.SP_3DSASH)
@@ -170,7 +136,7 @@ class FatController(wx.Frame):
         self.OutBook.AddPage(self.FirstPagePanel,'GENERAL',True,-1)
         self.FirstPageTextCtrl=wx.TextCtrl(self.FirstPagePanel,-1,'',(0,0),(0,0),wx.TE_MULTILINE|wx.TE_DONTWRAP|wx.TE_RICH2)
         self.FirstPageTextCtrl.SetOwnFont(wx.Font(8,wx.FONTFAMILY_MODERN,wx.FONTSTYLE_NORMAL,wx.FONTWEIGHT_NORMAL))
-        self.FirstPageTextCtrl.SetValue(self.startmessage)
+        self.FirstPageTextCtrl.SetValue(startmessage)
 
         self.IDShellTextCtrl=1001 # used for tying to events
         self.ShellTextCtrl=wx.TextCtrl(self.BLPanel,self.IDShellTextCtrl,'',(0,0),(0,18),wx.TE_PROCESS_ENTER)
@@ -267,14 +233,14 @@ class FatController(wx.Frame):
         self.EntityRoot=self.ObjectTreeCtrl.AppendItem(self.ConfigRoot,"Entities")
         self.Daemons=self.DaemonManager.getDaemons()
         self.DaemonRoot=self.ObjectTreeCtrl.AppendItem(self.ConfigRoot,"Daemons")
-        self.ScriptsRoot=self.ObjectTreeCtrl.AppendItem(self.ConfigRoot,"Scripts")
-        self.AliasesRoot=self.ObjectTreeCtrl.AppendItem(self.ConfigRoot,"Aliases")
-        self.SubsRoot=self.ObjectTreeCtrl.AppendItem(self.ConfigRoot,"Substitutions")
+        self.ScriptsRoot=self.ObjectTreeCtrl.AppendItem(self.ConfigRoot,"scripts")
+        self.AliasesRoot=self.ObjectTreeCtrl.AppendItem(self.ConfigRoot,"aliases")
+        self.SubsRoot=self.ObjectTreeCtrl.AppendItem(self.ConfigRoot,"substitutions")
         self.InsertIntoTreeCtrl(self.Entities.keys(),self.ObjectTreeCtrl,self.EntityRoot)
         self.InsertIntoTreeCtrl(self.Daemons.keys(),self.ObjectTreeCtrl,self.DaemonRoot)
-        self.InsertIntoTreeCtrl(self.Scripts.keys(),self.ObjectTreeCtrl,self.ScriptsRoot)
-        self.InsertIntoTreeCtrl(self.Aliases.keys(),self.ObjectTreeCtrl,self.AliasesRoot)
-        self.InsertIntoTreeCtrl(self.Substitutions.keys(),self.ObjectTreeCtrl,self.SubsRoot)
+        self.InsertIntoTreeCtrl(self.scripts.keys(),self.ObjectTreeCtrl,self.ScriptsRoot)
+        self.InsertIntoTreeCtrl(self.aliases.keys(),self.ObjectTreeCtrl,self.AliasesRoot)
+        self.InsertIntoTreeCtrl(self.substitutions.keys(),self.ObjectTreeCtrl,self.SubsRoot)
 
     def InsertIntoTreeCtrl(self,ListOfItems,Ctrl,RootNode):
         for item in ListOfItems:
@@ -306,9 +272,11 @@ class FatController(wx.Frame):
     ###########
     #
 
+    #TODO: logger
+
     def dbg(self,Msg,Fn,execclass=None):
         try:
-            if (self.TRACE[Fn] or self.TRACE["ALL"]):
+            if (self.trace[Fn] or self.trace["ALL"]):
                 self.display.infodisplay('DBG:'+Fn+': '+Msg)
         except KeyError: 
             pass
@@ -316,10 +284,7 @@ class FatController(wx.Frame):
     #
     ###########
 
-    ###########
-    # START OF FatController FUNCTIONS
-    #
-
+    # start fc methods
 
     def IndicateAlertState(self):
         self.ShellTextCtrl.SetBackgroundColour(wx.Colour(255,200,200))
@@ -333,9 +298,7 @@ class FatController(wx.Frame):
 
     def showalertqueue(self):
         self.display.infodisplay('F!HAlert Queue:')
-        #display.infodisplay('Current alerts:-')
         generatedalerts=self.DaemonManager.getOutstandingAlerts()
-
         ctr=0
         info=[]
         for alert in generatedalerts:
@@ -434,7 +397,7 @@ class FatController(wx.Frame):
     def getsubstitutedefines(self,SubstituteDict):
         DefinitionList=[]
         for s in SubstituteDict:
-            DefinitionList.append('substitute '+s+' '+' '.join(self.Substitutions[s]))
+            DefinitionList.append('substitute '+s+' '+' '.join(self.substitutions[s]))
         return DefinitionList
 
     def savelistaslineswithcr(self,Filename,AList,clobber=0):
@@ -450,8 +413,8 @@ class FatController(wx.Frame):
         #save entities, then aliases, then options
         DBGBN='savedata'
         EntityDefinitionList=self.EntityManager.getdefines()
-        AliasDefinitionList=self.getaliasdefines(self.Aliases)
-        SubstituteDefinitionList=self.getsubstitutedefines(self.Substitutions)
+        AliasDefinitionList=self.getaliasdefines(self.aliases)
+        SubstituteDefinitionList=self.getsubstitutedefines(self.substitutions)
         classoptionlists=self.EntityManager.getclassoptiondefines()
         #dbg('classoptionlists is '+str(len(classoptionlists))+' elements',DBGBN)
         fatcontrolleroptionlist=self.getfatcontrolleroptiondefines()
@@ -489,8 +452,8 @@ class FatController(wx.Frame):
             #DEVELOPR TOOLS MAKES THE SAVES INTO THE INSTALL PACKAGE
             # set FATCONTROLLER DEVELOPER yes
             # set FATCONTROLLER DEVELOPERPATH .....
-            if self.Opts.has_key('DEVELOPER') and self.Opts['DEVELOPER']=='yes':
-                pathandname=self.Opts['DEVELOPERPATH']+ProfileName+'.sav'
+            if self.opts.has_key('DEVELOPER') and self.opts['DEVELOPER']=='yes':
+                pathandname=self.opts['DEVELOPERPATH']+ProfileName+'.sav'
                 self.savedata(pathandname)
                 pathandname=self.installroot+ProfileName+'.sav'
                 #dbg('FATCONTROLLER DEVELOPER is yes. Doing save to DEVELOPERPATH',DBGBN)
@@ -506,55 +469,55 @@ class FatController(wx.Frame):
         self.display.infodisplay('Saved\t'+WhatToSave+'Succesfully.')
 
     def definealias(self,Name,List):
-        self.Aliases[Name]=List
+        self.aliases[Name]=List
         self.display.infodisplay('Alias: '+Name+' '+' '.join(List)+' Defined.')
 
     def showaliases(self,):
-        info=['F!HDefined Aliases:']
-        for a in self.Aliases:
-            info.append(''+a+'\t'+' '.join(self.Aliases[a]))
+        info=['F!HDefined aliases:']
+        for a in self.aliases:
+            info.append(''+a+'\t'+' '.join(self.aliases[a]))
         self.display.infodisplay(info)
         
     def delalias(self,AliasName):
-        del self.Aliases[AliasName]
+        del self.aliases[AliasName]
         self.display.infodisplay('Alias '+AliasName+' Deleted.')
 
     def isalias(Name):
         try:
-            self.Aliases[Name]
+            self.aliases[Name]
             return 1
         except KeyError:
             return 0
 
     def inserttoscript(self,scriptname,linenumber,cmdtokens):
         linenumber=int(linenumber)
-        cmdlist=self.Scripts[scriptname]
+        cmdlist=self.scripts[scriptname]
         lowerlist=cmdlist[:linenumber]
         lowerlist.append(' '.join(cmdtokens))
         for ul in cmdlist[linenumber:]:
             lowerlist.append(ul)
-        self.Scripts[scriptname]=lowerlist
+        self.scripts[scriptname]=lowerlist
         return 0
 
     def delfromscript(self,scriptname,linenumber):
         try:
-            self.Scripts[scriptname].pop(int(linenumber)-1)
+            self.scripts[scriptname].pop(int(linenumber)-1)
         except IndexError:
             self.display.infodisplay("ERROR: No line "+linenumber+" to delete.")
         return 0
 
     def appendtoscript(self,scriptname,cmdtokens):
         cmdstring=' '.join(cmdtokens)
-        if scriptname not in self.Scripts:
-            self.Scripts[scriptname]=[]
-            self.Scripts[scriptname].append(cmdstring)
+        if scriptname not in self.scripts:
+            self.scripts[scriptname]=[]
+            self.scripts[scriptname].append(cmdstring)
         else:
-            self.Scripts[scriptname].append(cmdstring)
+            self.scripts[scriptname].append(cmdstring)
         self.display.infodisplay('Line '+cmdstring+' Appended.')
 
     def delscript(self,scriptname):
         if self.isScript(scriptname):
-            del self.Scripts[scriptname]
+            del self.scripts[scriptname]
             self.display.infodisplay('Script '+scriptname+' Deleted.')
         else:
             self.display.infodisplay('Could not find script '+scriptname+' to delete.')
@@ -564,7 +527,7 @@ class FatController(wx.Frame):
         for parmsub in parmlist:
             self.processcommand('sub '+str(num)+' '+parmsub)
             num=num+1
-        cmdlist=self.Scripts[scriptname]
+        cmdlist=self.scripts[scriptname]
         for cmd in cmdlist:
             self.processcommand(cmd)
         num=1
@@ -574,7 +537,7 @@ class FatController(wx.Frame):
 
 
     def isScript(self,scriptname):
-        if scriptname not in self.Scripts:
+        if scriptname not in self.scripts:
             return 0
         else:
             return 1
@@ -582,23 +545,23 @@ class FatController(wx.Frame):
     def showscripts(self,scriptname):
         DBGBN='showscripts'
         if scriptname=='all':
-            scriptlist=self.Scripts.keys()
+            scriptlist=self.scripts.keys()
         else:
             scriptlist=[scriptname]
         #for script in scriptlist:
             #dbg('script '+script+' is in scriptlist to display',DBGBN)
-        self.display.infodisplay('F!HDefined Scripts:')
+        self.display.infodisplay('F!HDefined scripts:')
         for script in scriptlist:
             self.display.infodisplay('F!h'+script)
             ctr=1
-            for cmds in self.Scripts[script]:
+            for cmds in self.scripts[script]:
                 self.display.infodisplay(str(ctr)+' : '+cmds)
                 ctr=ctr+1
 
     def getscriptdefines(self):
         definelist=[]
-        for scriptname in self.Scripts:
-            for scriptline in self.Scripts[scriptname]:
+        for scriptname in self.scripts:
+            for scriptline in self.scripts[scriptname]:
                 definelist.append('addline '+scriptname+' '+scriptline)
         return definelist
 
@@ -607,25 +570,25 @@ class FatController(wx.Frame):
                 
 
     def definesubstitution(self,SubName,SubList):
-        self.Substitutions[SubName]=SubList
+        self.substitutions[SubName]=SubList
         self.display.infodisplay('Substitution '+SubName+' Defined.',switchfocus=False)
 
     def delsubstitution(self,SubName,switchfocus=False):
-        del self.Substitutions[SubName]
+        del self.substitutions[SubName]
         self.display.infodisplay('Substitution '+SubName+' Deleted.',switchfocus=False)
 
     def showsubstitutions(self):
         self.display.infodisplay('F!HSubstitutions:')
-        for s in self.Substitutions:
+        for s in self.substitutions:
             if len(s)<8:
                 tabs='\t\t'
             else:
                 tabs='\t'
-            self.display.infodisplay(s+tabs+' '.join(self.Substitutions[s]))
+            self.display.infodisplay(s+tabs+' '.join(self.substitutions[s]))
 
     def issubstitute(self,SubName):
         try:
-            self.Substitutions[SubName]
+            self.substitutions[SubName]
             return 1
         except KeyError:
             return 0
@@ -636,9 +599,9 @@ class FatController(wx.Frame):
         subhit=1
         while subhit==1:
             subhit=0
-            for sub in self.Substitutions:
+            for sub in self.substitutions:
                 SubCheck=RawCmd
-                RawCmd=re.sub('~'+sub,' '.join(self.Substitutions[sub]),RawCmd)
+                RawCmd=re.sub('~'+sub,' '.join(self.substitutions[sub]),RawCmd)
                 if SubCheck!=RawCmd:
                     #dbg('Made Substitution '+sub+' to get '+RawCmd,DBGBN)
                     subhit=1
@@ -670,29 +633,29 @@ class FatController(wx.Frame):
 
     def toggletrace(self,Fn):
         try:
-            if self.TRACE[Fn]:
-                self.TRACE[Fn]=0
+            if self.trace[Fn]:
+                self.trace[Fn]=0
                 self.display.infodisplay('Stop tracing block '+Fn)
             else:
-                self.TRACE[Fn]=1
+                self.trace[Fn]=1
                 self.display.infodisplay('Start tracing block '+Fn)
         except KeyError:
-            self.TRACE[Fn]=1
+            self.trace[Fn]=1
             self.display.infodisplay('Start tracing block '+Fn)
 
 
     def SetOption(self,EntityClass,Opt,Val):
         if EntityClass=='FATCONTROLLER':
             #dbg('Trapped OK',DBGBN)
-            self.Opts[Opt]=Val
+            self.opts[Opt]=Val
         else:
             self.EntityManager.SetClassOption(EntityClass,Opt,Val)
             self.display.infodisplay('Option '+EntityClass+' '+Opt+' '+Val+' Has been set.')
 
     def getfatcontrolleroptiondefines(self):
         optlist=[]
-        for opt in self.Opts:
-            optlist.append('set FATCONTROLLER '+opt+' '+self.Opts[opt])
+        for opt in self.opts:
+            optlist.append('set FATCONTROLLER '+opt+' '+self.opts[opt])
         return optlist
 
     def deleteentity(self,EntityName):
@@ -785,9 +748,9 @@ class FatController(wx.Frame):
                         eval(CreateExpression)
                         break
             else:   #{EndOf for Def} Check aliases
-                for AliasName in self.Aliases:
+                for AliasName in self.aliases:
                     if Cmd==AliasName: #then, make cmdstring alias cmd string and re-process
-                        AliasCmd=' '.join(self.Aliases[AliasName])
+                        AliasCmd=' '.join(self.aliases[AliasName])
                         AliasHit=1
                         self.dbg('Made alias hit to get '+AliasCmd,DBGBN)
                         break
@@ -810,7 +773,7 @@ class FatController(wx.Frame):
 
     def load(self,Profile):#will be load(profile)
         #EntityManager=FC_entitymanager.entitymanager()
-        self.Aliases={} #Is this right?
+        self.aliases={} #Is this right?
         try:
             print "DEBUGMJW: "+self.installroot+Profile+'.sav'
             FileToLoad=file(self.installroot+Profile+'.sav')
