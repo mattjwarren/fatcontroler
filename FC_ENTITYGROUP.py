@@ -5,7 +5,7 @@ import FC_entity
 class ENTITYGROUP(FC_entity.entity):
     '''Implentation of a 'meta' entity, which is groups of other entites'''
     def __init__(self,name,EntityNameList,EntityManagerInstance):
-	
+        
     #def __init__(name,EntityNameList,EntityManagerInstance):
         self.Name=name
         self.Entities=EntityNameList
