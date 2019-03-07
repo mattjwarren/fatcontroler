@@ -11,12 +11,12 @@ class daemoncollector:
 	how to identify which piece of data, data is written to file
 	and optionally tested against an alert.'''
 	
-    def __init__(self,tag,skip,format,file):
+    def __init__(self,tag,skip,format,data_filename):
 	self.datatag=re.compile(tag)
 	self.texttag=tag
 	self.skipforward=skip
 	self.outformat=format
-	self.outfile=file
+	self.data_filename=data_filename
 	self.alert=FC_daemonalert.daemonalert(0,0,'Alert Not Set',None,'NoScript','NoScript')
 	self.lastoutline=''
 
@@ -28,9 +28,6 @@ class daemoncollector:
 
     def getformat(self):
 	return self.outformat
-
-    def getfile(self):
-	return self.outfile
 
     def getalert(self):
 	return ' '.join(self.alert.getalert())

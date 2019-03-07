@@ -25,7 +25,7 @@ class daemonmanager:
             prettydaemons.append('\nDaemon:\t'+daemon+'\n\n\t'+self.daemons[daemon].getschedule().todatestring())
             for task in daemontasks:
                 prettydaemons.append('\n\tTask:-')
-                taskentities=daemontasks[task].getentities()
+                taskentities=daemontasks[task].entities
                 prettydaemons.append( '\t\t'+task+'\t'+daemontasks[task].tostring()+'\n')
                 prettydaemons.append( '\t\tEntities:-')
                 entitystring='\t\t'
@@ -34,7 +34,7 @@ class daemonmanager:
                 entitystring=entitystring[:-2]
                 prettydaemons.append(entitystring)
                 prettydaemons.append( '\n\t\tCollectors:-\t')
-                taskcollectors=daemontasks[task].getcollectors()
+                taskcollectors=daemontasks[task].collectors
                 for collector in taskcollectors:
                     prettydaemons.append( '\t\t\t'+collector+'->\n\t\t\t\tTAG '+taskcollectors[collector].gettag()+'\n\t\t\t\tSKIP '+taskcollectors[collector].getskip()+'\n\t\t\t\tFORMAT '+taskcollectors[collector].getformat()+'\n\t\t\t\tFILE '+taskcollectors[collector].getfile()+'\n\t\t\t\tALERT '+taskcollectors[collector].getalert())
         return prettydaemons
@@ -42,7 +42,7 @@ class daemonmanager:
     def addDaemon(self,name):
         self.daemons[name]=FC_daemon.daemon(self.EntityManager,self.AlertManager,name)
         
-    def isDaemon(self,name):
+    def is_daemon(self,name):
         try:
             self.daemons[name]
             return 1
@@ -83,7 +83,7 @@ class daemonmanager:
         self.Scheduler.addPeriodicAction(float(self.daemons[daemon].getschedule().getstart()),int(self.daemons[daemon].getschedule().getperiod()),self.daemons[daemon],daemon)
         self.activedaemons[daemon]='Active'
 
-    def killDaemon(self,daemon):
+    def kill_daemon(self,daemon):
         del self.activedaemons[daemon]
         self.Scheduler.unregisterTask(daemon)
 
@@ -105,7 +105,7 @@ class daemonmanager:
         for daemon in self.daemons:
             tasks=self.daemons[daemon].gettasks()
             for task in tasks:
-                command=tasks[task].getcommand()
+                command=tasks[task].command
                 definelist.append('define task '+daemon+' '+task+' '+' '.join(command))
         return definelist
 
@@ -114,7 +114,7 @@ class daemonmanager:
         for daemon in self.daemons:
             tasks=self.daemons[daemon].gettasks()
             for task in tasks:
-                collectors=tasks[task].getcollectors()
+                collectors=tasks[task].collectors
                 for collector in collectors:
                     definelist.append('define collector '+daemon+' '+task+' '+collector+' '+collectors[collector].tostring())
         return definelist
@@ -124,7 +124,7 @@ class daemonmanager:
         for daemon in self.daemons:
             tasks=self.daemons[daemon].gettasks()
             for task in tasks:
-                collectors=tasks[task].getcollectors()
+                collectors=tasks[task].collectors
                 for collector in collectors:
                     definelist.append('define alert '+daemon+' '+task+' '+collector+' '+collectors[collector].getalert())
         return definelist
@@ -135,7 +135,7 @@ class daemonmanager:
         for daemon in self.daemons:
             tasks=self.daemons[daemon].gettasks()
             for task in tasks:
-                entities=tasks[task].getentities()
+                entities=tasks[task].tentities
                 for entity in entities:
                     definelist.append('subscribe entity '+daemon+' '+task+' '+entity)
         return definelist

@@ -33,13 +33,13 @@ class daemonalert:
 	value=float(value)
 	if self.set:
 	    if(value<self.minimum or value>self.maximum):
-		thetime=time.strftime("%Y-%m-%d %H:%M:%S")
-		self.AlertManager.post(thetime+" | "+daemon+"-"+task+"-"+collector+", \'"+entity+"\' "+self.message+" VALUE="+str(value),entity)
-		if self.fail_script!='NoScript':
-                    self.AlertManager.ExecuteScript(self.fail_script,entity)
-            else:
-                    if self.pass_script!='NoScript':
-                        self.AlertManager.ExecuteScript(self.pass_script,entity)
+    		thetime=time.strftime("%Y-%m-%d %H:%M:%S")
+    		self.AlertManager.post(thetime+" | "+daemon.name+"-"+task.name+"-"+collector.name+", \'"+entity+"\' "+self.message+" VALUE="+str(value),entity)
+    		if self.fail_script!='NoScript':
+                 self.AlertManager.ExecuteScript(self.fail_script,entity)
+        else:
+            if self.pass_script!='NoScript':
+                 self.AlertManager.ExecuteScript(self.pass_script,entity)
 		
 
     def getalert(self):

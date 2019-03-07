@@ -8,7 +8,7 @@ class AlertManager:
         self.AlertQueue.append((message,entityname))
         self.EntityManager.SetAlertStatus(entityname)
         if len(self.AlertQueue)>0:
-            self.processcommander.IndicateAlertState()
+            self.processcommander.indicate_alert_state()
                         
 	def remove(self,start,end=None):
         #get set of all entities with alerts
@@ -30,14 +30,14 @@ class AlertManager:
         for ent in clearedents:
             self.EntityManager.ClearAlertStatus(ent)
         if len(self.AlertQueue)==0:
-            self.processcommander.ResetAlertIndicator()
+            self.processcommander.reset_alert_indicator()
 
-        def ExecuteScript(self,script,entityname): # EXECS 'ENTITY' based scripts, NOT FC scripts
-            #setup substitution scriptname_AlertEntity
-            #make substitution ~ALERT_ENTITY=entityname
-            self.processcommander.processcommand('sub ALERT_ENTITY '+entityname)
-            self.processcommander.processcommand('run '+script)
-            self.processcommander.processcommand('del sub ALERT_ENTITY')
+    def ExecuteScript(self,script,entityname): # EXECS 'ENTITY' based scripts, NOT FC scripts
+        #setup substitution scriptname_AlertEntity
+        #make substitution ~ALERT_ENTITY=entityname
+        self.processcommander.processcommand('sub ALERT_ENTITY '+entityname)
+        self.processcommander.processcommand('run '+script)
+        self.processcommander.processcommand('del sub ALERT_ENTITY')
                 
 
     def getOutstandingAlerts(self):

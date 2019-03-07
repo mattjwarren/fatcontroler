@@ -1,85 +1,9 @@
 #!/usr/bin/python
 #
 #Copyright 2005 MatthewWarren.matthew_j_warren@hotmail.com
-#
-#
-#
-# Version History
-# 15/12/06  v1f11r1a GUI Version update. Bugfixes.
-#                    Added green/amber/red lights to entity tabs
-#                    Added ability to execute FC scripts on alert_pass and alert_fail
-#                       * in defined scripts the sub ~ALERT_ENTITY can be
-#                       used. This wil be defined as a substitution when an alert
-#                       script is fired.
-#                    Added alert status colour change for shell bar
-#                    collectors now correctly datestamp file lines
-#
-# 07/12/06  v1f9r1a GUI version first release.
-#                   changes to handle paned notebook output style.
-#                   Added [[1..10,15,16]] notation to genreate lsits of commands.
-#
-# 21/09/05  v1f8r3a Enhanced alerting mechanism.
-#                   repackage new file structure. (migrate away from monlith)
-#		    minor version string issue fixed
-#
-# 15/09/05  v1f8r2a packaging fixup
-#
-# 14/09/05  v1f8r1s Added ENTITYGROUP entity type
-#      		    removed GUI code
-#
-# 28/05/05  v1f7r1a Bought under GNU public license.
-#           DaemonManager class incorporated and code updated.
-#
-# 09/02/05  v1f6r1a Woo! up to version1 - the GUI.. or what there is of it!
-#                   featureset still v6
-#                   release 1 alpha
-#
-# 08/02/05  v0f6r2a fixed load IOErrors
-# 08/02/05  v0f6r1a Switched Versioning Scheme to
-#                   version()featureset()release()a/b/-
-#                   Added new entity LOCAL, execs local cmds
-#
-# 02/02/05  v0.1.5a Added new options;
-#                       FATCONTROLLER   VERBOSE yes/no
-#                       TSM             DATAONLY yes/no
-#                       FATCONTROLLER   DEVELOPER yes/no
-#                       FATCONTROLLER   DEVELOPERPATH {path}
-#
-# 28/01/05  v0.1.4a Added scripting capability commands
-#                       addline
-#                       insline
-#                       delline
-#                       run
-#
-#v0.1.3a   	Collectors now write data to file if filename!=�none�
-#	   	collectors work with un-rooted filenames. IE; 
-#			a filename will have �/opt/yab/FatController/data/� or �c:\� 
-#			pre-pended to them depending on the type of system being used.
-#	   	schedules are now shown in local-times rather than seconds-since-the-epoch. 
-#	   	now+x notation now works for schedule start and end times.
-#	   	Updated manual with entity reference.
-#
-#v0.1.2a	Now it really does work under unix!
-#		fixed #dbg() trace bug.
-#		fixed shell escaping issues. escaped substitutions will have 
-#		the �\�s removed when executing from non-posix 
-#		environment.
-#
-#v0.1.1	a	Now runs under unix and windows!
-#		installers for unix and windows included!
-#
-#v0.1.0	a	Implementation of daemon framework
-#
-#v0.0.1a � v0.0.9a
-#		Base implementation. (CLI / ENTITES / Commands)
-#M.Warren
-#
-###########
 
 fcversion="v1f11r1a"
 __version__ = fcversion
-startmessage='Welcome to FatController '+fcversion
-
 
 import os,sys,telnetlib,re,shutil,time,threading,pprint
 
@@ -90,6 +14,7 @@ import FC_ENTITYGROUP,FC_LOCAL,FC_DUMB,FC_TSM,FC_TELNET
 import wx
 import FC_formatter
 
+startmessage='Welcome to FatController '+fcversion
 
 
 class FatController(wx.Frame):
@@ -286,17 +211,17 @@ class FatController(wx.Frame):
 
     # start fc methods
 
-    def IndicateAlertState(self):
+    def indicate_alert_state(self):
         self.ShellTextCtrl.SetBackgroundColour(wx.Colour(255,200,200))
         self.ShellTextCtrl.ClearBackground()
         self.ShellTextCtrl.Refresh()
 
-    def ResetAlertIndicator(self):
+    def reset_alert_indicator(self):
         self.ShellTextCtrl.SetBackgroundColour(wx.Colour(255,255,255))
         self.ShellTextCtrl.ClearBackground()
         self.ShellTextCtrl.Refresh()
 
-    def showalertqueue(self):
+    def show_alert_queue(self):
         self.display.infodisplay('F!HAlert Queue:')
         generatedalerts=self.DaemonManager.getOutstandingAlerts()
         ctr=0
@@ -306,59 +231,55 @@ class FatController(wx.Frame):
             ctr=ctr+1
         self.display.infodisplay(info)
         
-    def showactivedaemons(self):
+    def show_active_daemons(self):
         self.display.infodisplay('F!HCurrently Active Daemons:')
-        #display.infodisplay('Currently active daemons:-')
-        #display.infodisplay('')
         info=[]
         for active in self.DaemonManager.getactivedaemons():
             info.append(active)
         self.display.infodisplay(info)
         
-    def showdaemons(self):
+    def show_daemons(self):
         outlines=self.DaemonManager.getprettydaemons()
         self.display.infodisplay('F!HCurrently defined daemons/tasks/schedules and associated entities:')
         self.display.infodisplay(outlines)
-        #display.infodisplay('')
-        #display.infodisplay('')
                  
-    def createdaemon(self,name):
+    def create_daemon(self,name):
         self.DaemonManager.addDaemon(name)
         self.display.infodisplay('Daemon '+name+' Defined.')
         
-    def removedaemon(self,name):
+    def remove_daemon(self,name):
         self.DaemonManager.deleteDaemon(name)
         self.display.infodisplay('Daemon '+name+' Deleted.')
 
-    def scheduledaemon(self,name,begin,end,period):
+    def schedule_daemon(self,name,begin,end,period):
         self.DaemonManager.setdaemonschedule(name,begin,end,period)
         self.display.infodisplay('Schedule for daemon '+name+' Begin='+begin+' end='+end+' period='+period+' Set.')
             
-    def adddaemontask(self,daemonname,taskname,command):
+    def add_daemon_task(self,daemonname,taskname,command):
         self.DaemonManager.addTask(daemonname,taskname,command)
         self.display.infodisplay('Task '+taskname+' for daemon '+daemonname+' '.join(command)+' Defined.')
 
-    def removedaemontask(self,daemonname,taskname):
+    def remove_daemon_task(self,daemonname,taskname):
         self.DaemonManager.deleteTask(daemonname,taskname)
         self.display.infodisplay('Daemon '+daemonname+'Task '+taskname+' Deleted.')
 
-    def adddaemontaskcollector(self,daemonname,taskname,collectorname,tag,skip,format,file):
+    def add_daemon_task_collector(self,daemonname,taskname,collectorname,tag,skip,format,file):
         self.DaemonManager.addCollector(daemonname,taskname,collectorname,tag,skip,format,file)
         self.display.infodisplay('Collector '+collectorname+' for task '+taskname+' owned by daemon '+daemonname+' Datatag '+tag+' Skip '+skip+' Format '+format+' File '+file+' Defined.')
 
-    def removedaemontaskcollector(self,daemonname,taskname,collectorname):
+    def remove_daemon_task_collector(self,daemonname,taskname,collectorname):
         self.DaemonManager.deleteCollector(daemonname,taskname,collectorname)
         self.display.infodisplay('Daemon '+daemonname+' task '+taskname+' Collector '+collectorname+' Deleted.')
 
-    def adddaemontaskentity(self,daemonname,taskname,entityname):
+    def add_daemon_task_entity(self,daemonname,taskname,entityname):
         self.DaemonManager.subscribeEntity(daemonname,taskname,entityname)
         self.display.infodisplay('Daemon '+daemonname+' task '+taskname+' Entity '+entityname+' Subscribed.')
 
-    def removedaemontaskentity(self,daemonname,taskname,entityname):
+    def remove_daemon_task_entity(self,daemonname,taskname,entityname):
         self.DaemonManager.unsubscribeEntity(daemonname,taskname,entityname)
         self.display.infodisplay('Daemon '+daemonname+' task '+taskname+' Entity '+entityname+' Deleted.')
 
-    def adddaemontaskcollectoralert(self,daemonname,taskname,collectorname,minval,maxval,textmessage,pass_script,fail_script):
+    def add_daemon_task_collector_alert(self,daemonname,taskname,collectorname,minval,maxval,textmessage,pass_script,fail_script):
         pass_script=pass_script[0]
         fail_script=fail_script[0]
         if not self.isScript(pass_script):
@@ -368,7 +289,7 @@ class FatController(wx.Frame):
         self.DaemonManager.addAlert(daemonname,taskname,collectorname,minval,maxval,textmessage,pass_script,fail_script)
         self.display.infodisplay('Daemon '+daemonname+' task '+taskname+' collector '+collectorname+' Alert '+str(minval)+' '+str(maxval)+' '+textmessage+' scripts pass: '+pass_script+' fail: '+fail_script+' Defined.')
 
-    def makedaemonlive(self,daemonname):
+    def make_daemon_live(self,daemonname):
         DBGBN='FCmakedaemonlive'
         #dbg('Making daemon live.',DBGBN)
         #be carefull with the task naming here... what about removing from the middle of the list? will it pop() the same?
@@ -376,31 +297,31 @@ class FatController(wx.Frame):
         self.DaemonManager.makeLive(daemonname)
         self.display.infodisplay('Daemon '+daemonname+' Activated.')
 
-    def updatedaemontask(self,daemonname,taskname,command):
+    def update_daemon_task(self,daemonname,taskname,command):
         self.DaemonManager.updateTask(daemonname,taskname,command)
         self.display.infodisplay('Task '+taskname+' Updated.')
 
-    def killdaemon(self,daemonname):
+    def kill_daemon(self,daemonname):
         DBGBN='FCkilldaemon'
-        self.DaemonManager.killDaemon(daemonname)
+        self.DaemonManager.kill_daemon(daemonname)
         self.display.infodisplay('Daemon '+daemonname+' Deactivated.')
 
-    def IsDaemon(self,daemonname):
-        return self.DaemonManager.isDaemon(daemonname)
+    def is_daemon(self,daemonname):
+        return self.DaemonManager.is_daemon(daemonname)
 
-    def getaliasdefines(self,AliasDict):
+    def get_alias_defines(self,AliasDict):
         DefinitionList=[]
         for a in AliasDict:
             DefinitionList.append('alias '+a+' '+' '.join(AliasDict[a]))
         return DefinitionList
 
-    def getsubstitutedefines(self,SubstituteDict):
+    def get_substituted_defines(self,SubstituteDict):
         DefinitionList=[]
         for s in SubstituteDict:
             DefinitionList.append('substitute '+s+' '+' '.join(self.substitutions[s]))
         return DefinitionList
 
-    def savelistaslineswithcr(self,Filename,AList,clobber=0):
+    def save_list_as_lines_with_cr(self,Filename,AList,clobber=0):
         if clobber:
             SaveToFile=file(Filename,'w')
         else:
@@ -409,12 +330,12 @@ class FatController(wx.Frame):
             SaveToFile.write(Line.rstrip()+'\n')
         SaveToFile.close()
 
-    def savedata(self,pathandname):
+    def save_data(self,pathandname):
         #save entities, then aliases, then options
-        DBGBN='savedata'
+        DBGBN='save_data'
         EntityDefinitionList=self.EntityManager.getdefines()
-        AliasDefinitionList=self.getaliasdefines(self.aliases)
-        SubstituteDefinitionList=self.getsubstitutedefines(self.substitutions)
+        AliasDefinitionList=self.get_alias_defines(self.aliases)
+        SubstituteDefinitionList=self.get_substituted_defines(self.substitutions)
         classoptionlists=self.EntityManager.getclassoptiondefines()
         #dbg('classoptionlists is '+str(len(classoptionlists))+' elements',DBGBN)
         fatcontrolleroptionlist=self.getfatcontrolleroptiondefines()
@@ -430,20 +351,20 @@ class FatController(wx.Frame):
         activates=self.DaemonManager.getactivatedefines() # FC Function returns a list
         ########################################################################
         #
-        self.savelistaslineswithcr(pathandname,EntityDefinitionList,1)
-        self.savelistaslineswithcr(pathandname,AliasDefinitionList,0)
-        self.savelistaslineswithcr(pathandname,SubstituteDefinitionList,0)
+        self.save_list_as_lines_with_cr(pathandname,EntityDefinitionList,1)
+        self.save_list_as_lines_with_cr(pathandname,AliasDefinitionList,0)
+        self.save_list_as_lines_with_cr(pathandname,SubstituteDefinitionList,0)
         for optlist in classoptionlists:
-            self.savelistaslineswithcr(pathandname,optlist,0)
-        self.savelistaslineswithcr(pathandname,scriptdefinitions,0) # scripts before dameons cos daemons use 'em
-        self.savelistaslineswithcr(pathandname,fatcontrolleroptionlist)
-        self.savelistaslineswithcr(pathandname,daemondefines,0)
-        self.savelistaslineswithcr(pathandname,scheduledefines,0)
-        self.savelistaslineswithcr(pathandname,taskdefines,0)
-        self.savelistaslineswithcr(pathandname,collectordefines,0)
-        self.savelistaslineswithcr(pathandname,alertdefines,0)
-        self.savelistaslineswithcr(pathandname,subscriptiondefines,0)
-        self.savelistaslineswithcr(pathandname,activates,0)
+            self.save_list_as_lines_with_cr(pathandname,optlist,0)
+        self.save_list_as_lines_with_cr(pathandname,scriptdefinitions,0) # scripts before dameons cos daemons use 'em
+        self.save_list_as_lines_with_cr(pathandname,fatcontrolleroptionlist)
+        self.save_list_as_lines_with_cr(pathandname,daemondefines,0)
+        self.save_list_as_lines_with_cr(pathandname,scheduledefines,0)
+        self.save_list_as_lines_with_cr(pathandname,taskdefines,0)
+        self.save_list_as_lines_with_cr(pathandname,collectordefines,0)
+        self.save_list_as_lines_with_cr(pathandname,alertdefines,0)
+        self.save_list_as_lines_with_cr(pathandname,subscriptiondefines,0)
+        self.save_list_as_lines_with_cr(pathandname,activates,0)
 
         
     def save(self,WhatToSave,ProfileName):
@@ -454,42 +375,42 @@ class FatController(wx.Frame):
             # set FATCONTROLLER DEVELOPERPATH .....
             if self.opts.has_key('DEVELOPER') and self.opts['DEVELOPER']=='yes':
                 pathandname=self.opts['DEVELOPERPATH']+ProfileName+'.sav'
-                self.savedata(pathandname)
+                self.save_data(pathandname)
                 pathandname=self.installroot+ProfileName+'.sav'
                 #dbg('FATCONTROLLER DEVELOPER is yes. Doing save to DEVELOPERPATH',DBGBN)
                 #dbg('-pathandname is '+pathandname,DBGBN)
-                self.savedata(pathandname)
+                self.save_data(pathandname)
             else:
                 pathandname=self.installroot+ProfileName+'.sav'
                 #dbg('doing straight save. pathandname is '+pathandname,DBGBN)
-                self.savedata(pathandname)
+                self.save_data(pathandname)
             #
         else:
             self.display.infodisplay('Error: Don\'t know how to save '+WhatToSave  +'.')
         self.display.infodisplay('Saved\t'+WhatToSave+'Succesfully.')
 
-    def definealias(self,Name,List):
+    def define_alias(self,Name,List):
         self.aliases[Name]=List
         self.display.infodisplay('Alias: '+Name+' '+' '.join(List)+' Defined.')
 
-    def showaliases(self,):
+    def show_aliases(self,):
         info=['F!HDefined aliases:']
         for a in self.aliases:
             info.append(''+a+'\t'+' '.join(self.aliases[a]))
         self.display.infodisplay(info)
         
-    def delalias(self,AliasName):
+    def del_alias(self,AliasName):
         del self.aliases[AliasName]
         self.display.infodisplay('Alias '+AliasName+' Deleted.')
 
-    def isalias(Name):
+    def is_alias(Name):
         try:
             self.aliases[Name]
             return 1
         except KeyError:
             return 0
 
-    def inserttoscript(self,scriptname,linenumber,cmdtokens):
+    def insert_to_script(self,scriptname,linenumber,cmdtokens):
         linenumber=int(linenumber)
         cmdlist=self.scripts[scriptname]
         lowerlist=cmdlist[:linenumber]

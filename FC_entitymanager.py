@@ -115,42 +115,24 @@ class entitymanager:
       self.display.infodisplay('Exception caught in entitymanager define')
       pass
 
-                
-    #def fixpagestyle(self,ctrl):
-    #    attribs=wx.TextAttr(font=wx.Font(8,wx.FONTFAMILY_MODERN,wx.FONTSTYLE_NORMAL,wx.FONTWEIGHT_NORMAL))
-    #    ctrl.SetStyle(0,len(ctrl.GetValue()),attribs)
 
   def execute(self,EntityName,CmdList):
     DBGBN='entitymanagerexecute'
-    #executes CmdList depending on exec procedure for entitytype for named entity
     try:
       EntityType=self.Entities[EntityName].getentitytype()
-      #dbg('entity type is '+EntityType,DBGBN)
       output=self.Entities[EntityName].execute(CmdList) #list of output returned
-      #self.display.infodisplay('Changing page selected index to '+str(self.OutPages[EntityName][3]))
       self.OutBook.SetSelection(self.OutPages[EntityName][3]-1)
       self.Entities[EntityName].display(output,self.OutPages[EntityName][1])
       self.OutPages[EntityName][1].ScrollLines(1)
-      #self.OutBook.Update()
       self.ReturnFocus.SetFocus()
-      #self.fixpagestyle(self.OutPages[EntityName][1])
       self.LastExecutedEntity=EntityName
     except KeyError:
       self.display.infodisplay('Error:  Don\'t know how to execute commands for '+EntityName+'.')
 
-  def scheduledexecute(self,EntityName,CmdList):
-    DBGBN='entitymanagerscheduledexecute'
-    #dbg('entering...',DBGBN)
-    try:
-      EntityType=self.Entities[EntityName].getentitytype()
-      print "DEBUGMJW scheduled commands to execute are",CmdList
-      output=self.Entities[EntityName].execute(CmdList) #list of output returned
-      print "DEBUGMJW: output list from scheduled entity execute is",output
-      #global LastExecutedEntity
-      #LastExecutedEntity=EntityName
-      return output
-    except KeyError:
-      self.display.infodisplay('Error:  Don\'t know how to execute commands for '+EntityName+'.')
+  def scheduledexecute(self,entity,cmd_list):
+    EntityType=entity.getentitytype()
+    output=entity.execute(cmd_list) #list of output returned
+    return output
 
   def display(self,EntityName,OutputList):
     #self.display.infodisplay('Changing page selected index to '+str(self.OutPages[EntityName][3]))

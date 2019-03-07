@@ -12,46 +12,34 @@ class daemontask:
 	the group.'''
     
     def __init__(self,name,cmd):
-	self.command=cmd
-	self.entities={} # dict of entity onjects
-	self.collectors={} # dict (name:object) of collectors objects
-	self.name=name
-
-    def getcommand(self):
-	return self.command
+        self.command=cmd
+        self.entities={} # dict of entity onjects
+        self.collectors={} # dict (name:object) of collectors objects
+        self.name=name
 
     def setcommand(self,newcommand):
-	self.command=newcommand
-
-    def getentities(self):
-	return self.entities 
+        self.command=newcommand
 
     def addentity(self,entityobject): #pass an entity object to add it
-	self.entities[entityobject.getname()]=entityobject
+        self.entities[entityobject.getname()]=entityobject
 
     def getsubscribers(self):
         return self.entities
 
     def removeentity(self,entityobject):
-	del self.entities[entityobject.getname()] #pass an entity object to remove
+        del self.entities[entityobject.getname()] #pass an entity object to remove
 
     def addcollector(self,name,tag,skip,format,file): #add a named collector to the task
-	self.collectors[name]=FC_daemoncollector.daemoncollector(tag,skip,format,file)
+        self.collectors[name]=FC_daemoncollector.daemoncollector(tag,skip,format,file)
 
     def addcollectoralert(self,name,minval,maxval,alertmessage,alertmanager,pass_script,fail_script):
-	self.collectors[name].addalert(minval,maxval,alertmessage,alertmanager,pass_script,fail_script)
+        self.collectors[name].addalert(minval,maxval,alertmessage,alertmanager,pass_script,fail_script)
 
     def removecollector(self,name): # remove a named collector from the task
-	del self.collectors[name]
+        del self.collectors[name]
 
     def tostring(self):
-	return ' '.join(self.command)
-
-    def getcollectors(self):
-	return self.collectors
-
-    def getname(self):
-	return self.name
+        return ' '.join(self.command)
 
 #
 # END OF CLASS daemontask

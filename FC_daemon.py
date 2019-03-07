@@ -1,4 +1,5 @@
 import FC_ScheduledTask,FC_daemonschedule,FC_daemontask,os,time
+from config import config
 ###########
 # Some POSIX / winos setups ((this needs to be moved out of here. FC should
 # provide 'environment' services to entities.
@@ -32,7 +33,7 @@ class daemon(FC_ScheduledTask.ScheduledTask):
 	collector is a set of rules for extracting data from the results
 	of cmd run against each entity, and an optional alert set on that data.'''
 
-    def __init__(self,entitymanager,alertmanager,Name):
+    def __init__(self,entitymanager,alertmanager,name):
         FC_ScheduledTask.ScheduledTask.__init__(self)
         '''Parms.
 
@@ -40,31 +41,27 @@ class daemon(FC_ScheduledTask.ScheduledTask):
         using the scheduledexecute(EntityName,Cmd) method
         scheduler is the scheduler handling the executions, needed so
         daemon can rescheule itself for period units in the future'''
-        self.name=Name
+        self.name=name
         self.processor=entitymanager
         self.tasks={}
         self.schedule=FC_daemonschedule.daemonschedule()
         self.AlertManager=alertmanager
 
     def run(adaemon): #adaemon
-        for tsk in adaemon.tasks:
-            for ent in adaemon.tasks[tsk].getentities():
-                output=adaemon.processor.scheduledexecute(ent,adaemon.tasks[tsk].getcommand())
-                collectors=adaemon.tasks[tsk].getcollectors()
-                for collector in collectors:
-                        # will collect and return alert back if generated
-                    collectors[collector].read(output,adaemon.getname(),adaemon.tasks[tsk].getname(),collector,ent)
-                    collectorfile=collectors[collector].getfile()
-                    
-                    #TODO: Fix this
-                    if os.name=='posix':
-                        collectorfile=collectorfile.replace('\\','/')
-                    else:
-                        collectorfile=collectorfile.replace('/','\\')
-                    if collectorfile!='none':
-                        global driveroot
-                        outfile=file(driveroot+collectorfile+'_'+adaemon.getname()+tsk+ent+collector,'a')
-                        outfile.write(str(time.ctime(float(time.time())))+','+collectors[collector].lastoutline+'\n')
+        for task_name,task in adaemon.tasks.items():
+            entities=adaemon.tasks[tsk].entities.items()
+            for entity_name,entity in entities:
+                cmd_output=entity.execute(adaemon.tasks[task_name].command)
+                collectors=adaemon.tasks[tsk].collectors.items()
+                for collector_name,collector in collectors:
+                    collector.read(cmd_output,adaemon,adaemon.tasks[tsk],collector,ent)
+                    collectorfile=collectors[collector].data_filename
+                    if collectorfile!=None:
+                        outfile_path=os.path.join(config.data_path,collectorfile)
+                        outfile_path=outfile_path+("_%s_%s_%s_%s" % (adaemon.name,tsk,ent,collector.name)) 
+                        outfile=open(outfile_path,'a')
+                        timestamp=str(time.ctime(float(time.time())))
+                        outfile.write(timestamp+','+collectors[collector].lastoutline+'\n')
                         outfile.close()
 
     def setschedule(self,start,end,period):
@@ -103,8 +100,6 @@ class daemon(FC_ScheduledTask.ScheduledTask):
     def getnumtasks(self):
         return len(self.tasks)
 
-    def getname(self):
-        return self.name
 #
 # END OF CLASS DAEMON
 ###########
