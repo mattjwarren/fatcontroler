@@ -1,5 +1,5 @@
 import FC_ScheduledTask,FC_daemonschedule,FC_daemontask,os,time
-from config import config
+import config
 ###########
 # Some POSIX / winos setups ((this needs to be moved out of here. FC should
 # provide 'environment' services to entities.
