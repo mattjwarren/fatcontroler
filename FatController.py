@@ -7,7 +7,7 @@ __version__ = fcversion
 
 import os,sys,telnetlib,re,shutil,time,threading,pprint 
 
-from config import config
+from config import *
 import FC_entity,FC_daemonschedule,FC_daemontask,FC_daemon
 import FC_ScheduledTask,FC_ScheduledTaskHandler,FC_ThreadedScheduler,FC_entitymanager,FC_daemonmanager
 import FC_ENTITYGROUP,FC_LOCAL,FC_DUMB,FC_TSM,FC_TELNET
