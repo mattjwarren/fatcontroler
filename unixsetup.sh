@@ -1,5 +1,3 @@
-#!/bin/ksh
-
 print
 print "Creating dir strutures..."
 if [ ! -d /opt ];
