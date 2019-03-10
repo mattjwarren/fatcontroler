@@ -26,7 +26,7 @@ else
 fi
 echo
 echo "Copying files..."
-for file in $(ls)
+for file in $(ls) 
 do
 	cp "${file}" ${system_install_root}${install_root}${install_name}
 done
