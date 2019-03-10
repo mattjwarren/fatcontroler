@@ -30,6 +30,6 @@ for file in $(ls)
 do
 	cp "${file}" ${system_install_root}${install_root}${install_name}
 done
-cd ${system_install_root}
+cd ${system_install_root} 
 
 
