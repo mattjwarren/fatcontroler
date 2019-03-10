@@ -76,9 +76,10 @@ class daemoncollector:
                             fieldnum=tokens[1]
                             value=linefields[int(fieldnum)-1]
                         
-                    if self.alert.isset():
-                        self.alert.check(value,daemon,task,collector,entity)
-                    outline=outline+label+str(value)
+                            if self.alert.isset():
+                                self.alert.check(value,daemon,task,collector,entity)
+                                
+                            outline=outline+label+str(value)
                     #
                     else:
                         switchmode=skiplines
