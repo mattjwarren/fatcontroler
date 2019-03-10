@@ -10,7 +10,7 @@ class AlertManager:
         if len(self.AlertQueue)>0:
             self.processcommander.indicate_alert_state()
                         
-	def remove(self,start,end=None):
+    def remove(self,start,end=None):
         #get set of all entities with alerts
         ents=[]
         for alert in self.AlertQueue:
@@ -44,5 +44,5 @@ class AlertManager:
         alerts=[]
         for items in self.AlertQueue:
             alerts.append(items[0])
-    return alerts
+        return alerts
 
