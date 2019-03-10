@@ -1,3 +1,4 @@
+#!/bin/bash
 echo
 system_install_root='/home/matt/'
 install_root='yab/'
@@ -29,6 +30,6 @@ for file in $(ls)
 do
 	cp "${file}" ${system_install_root}${install_root}${install_name}
 done
-${system_install_root}${install_root}${install_name}
-chmod 775 *
+cd ${system_install_root}
+chown matt:matt ${install_root}
 
