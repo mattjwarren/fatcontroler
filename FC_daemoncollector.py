@@ -62,27 +62,27 @@ class daemoncollector:
                     #
                 else:#not counting it.
                     #if skiplines=0 then collect data, otherwise switch to skip mode
-                if int(skiplines)==0:
+                    if int(skiplines)==0:
                     #
                     # split the line into fields, use format to order and concatenate
                     #
-                    outline=''
-                    formatfields=self.outformat.split()
-                    linefields=line.split()
-                    for fieldtoken in formatfields:
-                        tokens=str.split(fieldtoken,'^')
-                        lbl=tokens[0]
-                        label=lbl.replace('_',' ')
-                        fieldnum=tokens[1]
-                        value=linefields[int(fieldnum)-1]
+                        outline=''
+                        formatfields=self.outformat.split()
+                        linefields=line.split()
+                        for fieldtoken in formatfields:
+                            tokens=str.split(fieldtoken,'^')
+                            lbl=tokens[0]
+                            label=lbl.replace('_',' ')
+                            fieldnum=tokens[1]
+                            value=linefields[int(fieldnum)-1]
                         
                     if self.alert.isset():
                         self.alert.check(value,daemon,task,collector,entity)
                     outline=outline+label+str(value)
                     #
-                else:
-                    switchmode=skiplines
-                    skiplines=0
+                    else:
+                        switchmode=skiplines
+                        skiplines=0
         if hitcount>0:
             formattokens=str.split(self.outformat,'^')
             label=formattokens[0]
