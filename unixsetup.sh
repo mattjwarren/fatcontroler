@@ -31,5 +31,5 @@ do
 	cp "${file}" ${system_install_root}${install_root}${install_name}
 done
 cd ${system_install_root}
-chown matt:matt ${install_root}
+chown matt:matt ${install_root}/*
 
