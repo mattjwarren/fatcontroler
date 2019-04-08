@@ -4,6 +4,8 @@ import FC_formatter
 # START OF CLASS entitymanager
 #
 
+
+imageroot='/home/matt/yab/'
 class entitymanager:
 
 #
@@ -15,11 +17,11 @@ class entitymanager:
         self.OutPages={} #entity name keyed, value is page for output
 
         #img=wx.Image('c:\\program files\\yab\\fatcontroller\\redalert.jpg', wx.BITMAP_TYPE_JPEG)
-        img=wx.Image('/opt/yab/FatController/redalert.jpg', wx.BITMAP_TYPE_JPEG)
+        img=wx.Image(imageroot+'FatController/redalert.jpg', wx.BITMAP_TYPE_JPEG)
         self.RedBMP=wx.BitmapFromImage(img)
-        img=wx.Image('/opt/yab/FatController/yellowalert.jpg', wx.BITMAP_TYPE_JPEG)
+        img=wx.Image(imageroot+'FatController/yellowalert.jpg', wx.BITMAP_TYPE_JPEG)
         self.AmberBMP=wx.BitmapFromImage(img)
-        img=wx.Image('/opt/yab/FatController/greenalert.jpg', wx.BITMAP_TYPE_JPEG)
+        img=wx.Image(imageroot+'FatController/greenalert.jpg', wx.BITMAP_TYPE_JPEG)
         self.GreenBMP=wx.BitmapFromImage(img)
         self.AlertImageList=wx.ImageList(12,12)
         self.AlertImageList.Add(self.RedBMP)
