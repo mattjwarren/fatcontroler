@@ -74,7 +74,7 @@ class daemon(FC_ScheduledTask.ScheduledTask):
         self.tasks[name]=FC_daemontask.daemontask(name,command)
 
     def gettasks(self):
-	return self.tasks #returns dict of tasks
+        return self.tasks #returns dict of tasks
 
     def gettask(self,name):
         return self.tasks[name] #returns single task

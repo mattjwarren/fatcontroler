@@ -21,7 +21,7 @@ get it added to the tasks to be run.
 
 from threading import Thread, Event
 import time
-from exceptions import IOError
+#from exception import IOError
 
 class ThreadedScheduler(Thread):
     """

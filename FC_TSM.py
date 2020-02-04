@@ -1,4 +1,4 @@
-import FC_entity,os
+import FC_entity,os,subprocess
 
 ###########
 # Some POSIX / winos setups ((this needs to be moved out of here. FC should
