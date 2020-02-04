@@ -161,11 +161,11 @@ class FatController(wx.Frame):
         self.ScriptsRoot=self.ObjectTreeCtrl.AppendItem(self.ConfigRoot,"scripts")
         self.AliasesRoot=self.ObjectTreeCtrl.AppendItem(self.ConfigRoot,"aliases")
         self.SubsRoot=self.ObjectTreeCtrl.AppendItem(self.ConfigRoot,"substitutions")
-        self.InsertIntoTreeCtrl(self.Entities.keys(),self.ObjectTreeCtrl,self.EntityRoot)
-        self.InsertIntoTreeCtrl(self.Daemons.keys(),self.ObjectTreeCtrl,self.DaemonRoot)
-        self.InsertIntoTreeCtrl(self.scripts.keys(),self.ObjectTreeCtrl,self.ScriptsRoot)
-        self.InsertIntoTreeCtrl(self.aliases.keys(),self.ObjectTreeCtrl,self.AliasesRoot)
-        self.InsertIntoTreeCtrl(self.substitutions.keys(),self.ObjectTreeCtrl,self.SubsRoot)
+        self.InsertIntoTreeCtrl(list(self.Entities.keys()),self.ObjectTreeCtrl,self.EntityRoot)
+        self.InsertIntoTreeCtrl(list(self.Daemons.keys()),self.ObjectTreeCtrl,self.DaemonRoot)
+        self.InsertIntoTreeCtrl(list(self.scripts.keys()),self.ObjectTreeCtrl,self.ScriptsRoot)
+        self.InsertIntoTreeCtrl(list(self.aliases.keys()),self.ObjectTreeCtrl,self.AliasesRoot)
+        self.InsertIntoTreeCtrl(list(self.substitutions.keys()),self.ObjectTreeCtrl,self.SubsRoot)
 
     def InsertIntoTreeCtrl(self,ListOfItems,Ctrl,RootNode):
         for item in ListOfItems:
@@ -373,7 +373,7 @@ class FatController(wx.Frame):
             #DEVELOPR TOOLS MAKES THE SAVES INTO THE INSTALL PACKAGE
             # set FATCONTROLLER DEVELOPER yes
             # set FATCONTROLLER DEVELOPERPATH .....
-            if self.opts.has_key('DEVELOPER') and self.opts['DEVELOPER']=='yes':
+            if 'DEVELOPER' in self.opts and self.opts['DEVELOPER']=='yes':
                 pathandname=self.opts['DEVELOPERPATH']+ProfileName+'.sav'
                 self.save_data(pathandname)
                 pathandname=self.installroot+ProfileName+'.sav'
@@ -466,7 +466,7 @@ class FatController(wx.Frame):
     def showscripts(self,scriptname):
         DBGBN='showscripts'
         if scriptname=='all':
-            scriptlist=self.scripts.keys()
+            scriptlist=list(self.scripts.keys())
         else:
             scriptlist=[scriptname]
         #for script in scriptlist:
@@ -623,7 +623,7 @@ class FatController(wx.Frame):
         else:
             CommandList=[Command]
         for Command in CommandList:
-            print "Command is:",Command
+            print("Command is:",Command)
             Command=self.processsubstitutions(Command)  #  if ! aliascmd then flow is,  RawCmd->subbed->executed
                                     # is IS aliascmd then flow is   RawCmd->Subbed->aliashit->subbed->executed
             self.dbg('After Substitution: '+Command,DBGBN)
@@ -683,7 +683,7 @@ class FatController(wx.Frame):
                         else:
                             self.display.infodisplay('Error: Dont know which entity to use.')
                     else:
-                        print "DEBUGMJW: Command is ",Command
+                        print("DEBUGMJW: Command is ",Command)
                         self.display.infodisplay('Error: Bad command.\t'+Command)
                 if AliasHit==1:
                     AliasHit=0
@@ -696,11 +696,12 @@ class FatController(wx.Frame):
         #EntityManager=FC_entitymanager.entitymanager()
         self.aliases={} #Is this right?
         try:
-            print "DEBUGMJW: "+self.installroot+Profile+'.sav'
+            print("DEBUGMJW: "+self.installroot+Profile+'.sav')
             FileToLoad=file(self.installroot+Profile+'.sav')
             for Line in FileToLoad:
                 self.processcommand(Line)
-        except IOError,(errno,strerror):
+        except IOError as xxx_todo_changeme:
+            (errno,strerror) = xxx_todo_changeme.args
             self.display.infodisplay("Error: ["+str(errno)+"] "+strerror+"\t"+self.installroot+Profile+".sav")
         #makeObjectBrowser()
 

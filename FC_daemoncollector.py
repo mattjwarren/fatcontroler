@@ -54,7 +54,7 @@ class daemoncollector:
             if switchmode>0:
                 switchmode=switchmode-1
             else:
-                print "MJW: line from scheduled tast is",line
+                print("MJW: line from scheduled tast is",line)
             if re.search(self.datatag,line):
                 #we have a hit, shall I count it?
                 if str(skiplines)=='COUNT':

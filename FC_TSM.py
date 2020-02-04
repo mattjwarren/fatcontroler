@@ -97,7 +97,7 @@ class TSM(FC_entity.entity):
                 Dummyout.close()
                 Dummyerr.close()
             except OSError:
-                print 'ERROR: System error on popen3() cannot copy TSM optfile - Have you created your FC_OPT dir and .opt files?'
+                print('ERROR: System error on popen3() cannot copy TSM optfile - Have you created your FC_OPT dir and .opt files?')
         else:
             try:
                 #dbg('Using non-posix paths. Command is;\n\t'+copycmd+' \"'+TSM.tsmroot+TSM.optroot+self.Name+'.opt\" \"'+TSM.tsmroot+'dsm.opt\"',DBGBN)
@@ -106,11 +106,11 @@ class TSM(FC_entity.entity):
                 Dummyout.close()
                 Dummyerr.close()
             except OSError:
-                print 'ERROR: System error on popen3() cannot copy TSM optfile - Have you created your FC_OPT dir and .opt files?'
+                print('ERROR: System error on popen3() cannot copy TSM optfile - Have you created your FC_OPT dir and .opt files?')
 
         #dbg('done copyfile for dsm renaming',DBGBN)
         #PROCESS CLASS OPTIONS SPECIFIC TO EXECUTION
-        if TSM.Opts.has_key('DATAONLY') and TSM.Opts['DATAONLY']=='yes':
+        if 'DATAONLY' in TSM.Opts and TSM.Opts['DATAONLY']=='yes':
             #dbg('got YES for DATAONLY option',DBGBN)
             runcmd=TSM.tsmcleanadmincmd
         else:
@@ -131,9 +131,9 @@ class TSM(FC_entity.entity):
             errorlines=CmdErr.readlines()
             CmdErr.close()
             for line in errorlines:
-                print line
+                print(line)
         except OSError:
-            print 'Warning: System error on popen(), TSM entity '+self.Name+' failed command.'
+            print('Warning: System error on popen(), TSM entity '+self.Name+' failed command.')
             return ['']
         return outputlines
     

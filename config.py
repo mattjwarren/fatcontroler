@@ -1,5 +1,5 @@
 import os
-
+#Currently chnges here need reflecting in unixsetup.sh
 system_install_root='/home/matt/'
 install_root='yab'
 install_name='FatController'

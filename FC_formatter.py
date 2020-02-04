@@ -11,7 +11,7 @@ class OutputFormatter(object):
     # h - line is sub header. Will be bulleted. \n before and \n\n after
     #
         #TODO: This is awful. fix strings to all unicode
-        if type(msg) in [type('a string'),type(u'a unicode string')]:
+        if type(msg) in [type('a string'),type('a unicode string')]:
             msg=[msg]
         if switchfocus:
             self.notebook.SetSelection(0)

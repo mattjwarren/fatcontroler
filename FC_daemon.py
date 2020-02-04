@@ -48,11 +48,11 @@ class daemon(FC_ScheduledTask.ScheduledTask):
         self.AlertManager=alertmanager
 
     def run(adaemon): #adaemon
-        for task_name,task in adaemon.tasks.items():
-            entities=adaemon.tasks[tsk].entities.items()
+        for task_name,task in list(adaemon.tasks.items()):
+            entities=list(adaemon.tasks[tsk].entities.items())
             for entity_name,entity in entities:
                 cmd_output=entity.execute(adaemon.tasks[task_name].command)
-                collectors=adaemon.tasks[tsk].collectors.items()
+                collectors=list(adaemon.tasks[tsk].collectors.items())
                 for collector_name,collector in collectors:
                     collector.read(cmd_output,adaemon,adaemon.tasks[tsk],collector,ent)
                     collectorfile=collectors[collector].data_filename

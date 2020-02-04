@@ -113,7 +113,7 @@ class entitymanager:
                 self.OutPages[EntityName][1].SetAutoLayout(True)
                 self.OutPages[EntityName][2].Fit(self.OutPages[EntityName][0])
                 self.OutPages[EntityName][2].Layout()
-        except UnboundLocalError, NameError:
+        except UnboundLocalError as NameError:
             self.display.infodisplay('Exception caught in entitymanager define')
             pass
 

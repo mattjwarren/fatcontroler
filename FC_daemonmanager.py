@@ -15,7 +15,7 @@ class daemonmanager:
 
     def getactivedaemons(self):
         """ return a list of active daemon names"""
-        return self.activedaemons.keys()
+        return list(self.activedaemons.keys())
 
     def getprettydaemons(self):
         """ return a list of lines, formatted daemon definitions """

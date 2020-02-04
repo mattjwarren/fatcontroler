@@ -56,7 +56,7 @@ class ThreadedScheduler(Thread):
         """
         try:
             self._notifyEvent.wait(seconds)
-        except IOError, e:
+        except IOError as e:
             pass
         self._notifyEvent.clear()
 
@@ -77,7 +77,7 @@ class ThreadedScheduler(Thread):
         """
         Check to see if a task with the given name is currently running.
         """
-        return self._running.has_key(name)
+        return name in self._running
 
     def setRunning(self, handle):
         """
@@ -111,7 +111,7 @@ class ThreadedScheduler(Thread):
         """
         Is the task with he given name in the scheduled list?
         """
-        return self._scheduled.has_key(name)
+        return name in self._scheduled
 
     def setScheduled(self, handle):
         """
@@ -143,7 +143,7 @@ class ThreadedScheduler(Thread):
         """
         Is the task with he given name in the onDemand list?
         """     
-        return self._onDemand.has_key(name)
+        return name in self._onDemand
 
     def setOnDemand(self, handle):
         """
@@ -332,8 +332,8 @@ class ThreadedScheduler(Thread):
         """
         Terminate all running tasks.
         """
-        for i in self._running.keys():
-            print "Stopping ",i
+        for i in list(self._running.keys()):
+            print("Stopping ",i)
             self.stopTask(i)
 
     def disableTask(self, name):
@@ -456,7 +456,7 @@ class ThreadedScheduler(Thread):
                 if currentTime >= nextTime:
                     toRun = []
                     nextRun = None
-                    for handle in self._scheduled.values():
+                    for handle in list(self._scheduled.values()):
                         startTime = handle.startTime()
                         if startTime <= currentTime:
                             toRun.append(handle)
